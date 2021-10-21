@@ -10,10 +10,6 @@
  * @property {string} [repository]
  *   Repository to link against.
  */
-
-import fs from 'node:fs'
-import process from 'node:process'
-import path from 'node:path'
 import {visit} from 'unist-util-visit'
 import {toString} from 'mdast-util-to-string'
 import {findAndReplace} from 'mdast-util-find-and-replace'
@@ -99,24 +95,6 @@ export default function remarkGithub(options = {}) {
   let repository = options.repository
   /** @type {PackageJson|undefined} */
   let pkg
-
-  // Get the repository from `package.json`.
-  if (!repository) {
-    try {
-      pkg = JSON.parse(
-        String(fs.readFileSync(path.join(process.cwd(), 'package.json')))
-      )
-    } catch {}
-
-    repository =
-      pkg && pkg.repository
-        ? // Object form.
-          /* c8 ignore next 2 */
-          typeof pkg.repository === 'object'
-          ? pkg.repository.url
-          : pkg.repository
-        : ''
-  }
 
   // Parse the URL: See the tests for all possible kinds.
   const repositoryMatch = repoRegex.exec(repository || '')
